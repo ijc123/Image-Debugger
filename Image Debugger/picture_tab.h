@@ -23,6 +23,7 @@ public:
 public delegate void MouseOverPixelEventHandler(Object ^sender, Point ^pos);
 public delegate void CloseTabEventHandler(Object ^sender);
 
+private enum ZoomMode {ZOOM_IN,ZOOM_OUT};
 
 public ref class cPictureTab abstract : public TabPage
 {
@@ -96,6 +97,8 @@ public:
 
 protected:
 
+	
+
 	cPictureTab(String ^fileName)
 	{		
 		globalFlip = false;
@@ -122,8 +125,8 @@ protected:
 		panel->AutoScroll = true;
 		panel->MouseMove += gcnew MouseEventHandler(this, &cPictureTab::MouseMove_Event);
 		panel->MouseUp += gcnew MouseEventHandler(this, &cPictureTab::MouseUp_Event);
-		panel->MouseClick += gcnew MouseEventHandler(this, &cPictureTab::MouseWheel_Event);
-		//panel->MouseWheel += gcnew MouseEventHandler(this, &cPictureTab::MouseWheel_Event);
+		panel->MouseClick += gcnew MouseEventHandler(this, &cPictureTab::MouseClick_Event);
+		panel->MouseWheel += gcnew MouseEventHandler(this, &cPictureTab::MouseWheel_Event);
 		panel->Paint += gcnew PaintEventHandler(this, &cPictureTab::Panel_OnPaint);	
 		
 		Controls->Add(panel);
@@ -159,7 +162,7 @@ protected:
 	{
 		mousePos = ZoomedPos(Point(e->X, e->Y));
 
-		if(e->Button == System::Windows::Forms::MouseButtons::Middle) {
+		if(e->Button == System::Windows::Forms::MouseButtons::Left) {
 
 			if(first) {
 				
@@ -182,6 +185,18 @@ protected:
 		
 	}
 
+	void MouseClick_Event(Object ^sender, MouseEventArgs ^e)
+	{
+		
+		if(e->Button == System::Windows::Forms::MouseButtons::Middle) {
+
+			Point screenPos = ZoomedPos(Point(e->X, e->Y));
+
+			Zoom(ZOOM_IN, screenPos);	
+		}
+		
+	}
+
 	void MouseUp_Event(Object ^sender, MouseEventArgs ^e)
 	{
 
@@ -196,19 +211,31 @@ protected:
 
 		Point screenPos = ZoomedPos(Point(e->X, e->Y));
 
-		//if(e->Delta > 0) {
+		if(e->Delta > 0) {
 			
-			zoomFactor *= 2;
-/*
+			Zoom(ZOOM_IN, screenPos);
+
 		} else {
 
-			if(zoomFactor > 1) {
-
-				zoomFactor /= 2;
-			}
+			Zoom(ZOOM_OUT, screenPos);
 		}
-*/
 		
+	}
+
+	void Zoom(ZoomMode mode, Point screenPos) {
+
+		if(mode == ZOOM_IN) {
+
+			zoomFactor *= 2;
+
+		} else if(mode == ZOOM_OUT) {
+
+			if(zoomFactor == 1) return;
+
+			zoomFactor /= 2;
+			
+		}
+
 		imageSourceRect.Width = DEFAULT_CANVAS_WIDTH / zoomFactor;
 		imageSourceRect.Height = DEFAULT_CANVAS_HEIGHT / zoomFactor;
 
@@ -216,9 +243,8 @@ protected:
 		imageSourceRect.Y = screenPos.Y - imageSourceRect.Height / 2;
 
 		panel->Refresh();
-		
-	}
 
+	}
 
 	void mnuClose_Click(Object ^sender, EventArgs ^e)
 	{	
