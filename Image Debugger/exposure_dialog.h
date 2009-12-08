@@ -7,7 +7,8 @@ using namespace System::Windows::Forms;
 using namespace System::Data;
 using namespace System::Drawing;
 
-
+// dialog to modify exposure values of XML images, exposure values
+// are stored on a per image basis
 public ref class cExposureDialog : public System::Windows::Forms::Form
 {
 public:

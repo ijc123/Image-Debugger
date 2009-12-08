@@ -9,13 +9,13 @@ using namespace System::Drawing;
 using namespace System::Windows::Forms;
 
 
-public ref class cIntPictureTab : public cPictureTab
+public ref class cBytePictureTab : public cPictureTab
 {
 
 public:
 
-	cIntPictureTab(String ^fileName) :
-		cPictureTab(fileName)
+	cBytePictureTab(String ^fileName, System::Drawing::Size ^dim) :
+	  cPictureTab(fileName, dim)
     {		
 		
 

@@ -1,9 +1,6 @@
 #pragma once
 #include "db_flowlayoutpanel.h"
 
-#define DEFAULT_CANVAS_WIDTH	1024
-#define DEFAULT_CANVAS_HEIGHT	768
-
 #using <System.dll>
 #using <System.Drawing.dll>
 #using <System.Windows.Forms.dll>
@@ -94,21 +91,20 @@ public:
 		return(zoomedPos);
 	}
 
-
 protected:
 
 	
-
-	cPictureTab(String ^fileName)
+	cPictureTab(String ^fileName, System::Drawing::Size ^dim)
 	{		
 		globalFlip = false;
 		localFlip = false;
 		first = true;
 		zoomFactor = 1;
+		Size = *dim;
 
 		LoadImage(fileName);
 
-		imageSourceRect = Rectangle(0,0,DEFAULT_CANVAS_WIDTH,DEFAULT_CANVAS_HEIGHT);
+		imageSourceRect = Rectangle(0,0,Size.Width,Size.Height);
 
 		Name = id.ToString();
 		id++;
@@ -116,9 +112,7 @@ protected:
 		ToolTipText = fileName;
 		
 		panel = gcnew cDBFlowLayoutPanel();
-		panel->Size = System::Drawing::Size(DEFAULT_CANVAS_WIDTH,DEFAULT_CANVAS_HEIGHT);	
-		panel->MinimumSize = System::Drawing::Size(DEFAULT_CANVAS_WIDTH,DEFAULT_CANVAS_HEIGHT);	
-		panel->MaximumSize = System::Drawing::Size(DEFAULT_CANVAS_WIDTH,DEFAULT_CANVAS_HEIGHT);
+		panel->Size = *dim;	
 		panel->Dock = DockStyle::Fill;
 		panel->AutoSize = true;
 		panel->Cursor = Cursors::Cross;
@@ -236,8 +230,8 @@ protected:
 			
 		}
 
-		imageSourceRect.Width = DEFAULT_CANVAS_WIDTH / zoomFactor;
-		imageSourceRect.Height = DEFAULT_CANVAS_HEIGHT / zoomFactor;
+		imageSourceRect.Width = Size.Width / zoomFactor;
+		imageSourceRect.Height = Size.Height / zoomFactor;
 
 		imageSourceRect.X = screenPos.X - imageSourceRect.Width / 2;
 		imageSourceRect.Y = screenPos.Y - imageSourceRect.Height / 2;
@@ -263,7 +257,7 @@ protected:
 	{	
 		
 		zoomFactor = 1;
-		imageSourceRect = Rectangle(0,0,DEFAULT_CANVAS_WIDTH,DEFAULT_CANVAS_HEIGHT);
+		imageSourceRect = Rectangle(0,0,Size.Width,Size.Height);
 		panel->Refresh();
 
 	}
@@ -279,7 +273,7 @@ protected:
 			localFlip = globalFlip;
 		}
 
-		gPanel->DrawImage(bitmap, Rectangle(0,0,DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT),
+		gPanel->DrawImage(bitmap, Rectangle(0,0,Size.Width, Size.Height),
 			imageSourceRect, GraphicsUnit::Pixel);	
 		
 	}

@@ -238,6 +238,10 @@
 				Name="Picture Tab"
 				>
 				<File
+					RelativePath=".\byte_picture_tab.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Image Debugger\db_flowlayoutpanel.h"
 					>
 				</File>
@@ -246,15 +250,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Image Debugger\float_picture_tab.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Image Debugger\int_picture_tab.h"
-					>
-				</File>
-				<File
 					RelativePath=".\picture_tab.h"
+					>
+				</File>
+				<File
+					RelativePath=".\xml_picture_tab.h"
 					>
 				</File>
 			</Filter>

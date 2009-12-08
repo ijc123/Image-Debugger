@@ -1,8 +1,15 @@
+/*
+
+*/
+
 #pragma once
-#include "int_picture_tab.h"
-#include "float_picture_tab.h"
+#include "byte_picture_tab.h"
+#include "xml_picture_tab.h"
 #include "rgba_info.h"
 #include "about_dialog.h"
+
+#define DEFAULT_CANVAS_WIDTH	1024
+#define DEFAULT_CANVAS_HEIGHT	768
 
 #using <System.dll>
 #using <System.Drawing.dll>
@@ -22,8 +29,10 @@ public:
     {
 		Form::Text = L"Image Debugger";
 		Form::AutoSize = true;
+		Form::MaximizeBox = false;
+		Form::FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 
-		Resize += gcnew System::EventHandler(this, &cImageDebugger::Resize_Event);
+		tabSize = gcnew System::Drawing::Size(DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
 
 		// menu items
 		mnuMain = gcnew MenuStrip();
@@ -68,9 +77,7 @@ public:
 		tabControl->Name = L"tabControl1";
 		tabControl->SizeMode = TabSizeMode::Fixed;
 		tabControl->SelectedIndex = 0;
-		tabControl->Size = System::Drawing::Size(DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
-		tabControl->MinimumSize = System::Drawing::Size(DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
-		tabControl->MaximumSize = System::Drawing::Size(DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
+		tabControl->Size = *tabSize;
 		tabControl->TabIndex = 1;
 
 		tabControl->SelectedIndexChanged += gcnew System::EventHandler(this, &cImageDebugger::tabButton_Click);
@@ -103,7 +110,7 @@ public:
 		flowLayoutPanel2 = gcnew FlowLayoutPanel();
 		flowLayoutPanel2->Location = System::Drawing::Point(220, 32);
 		flowLayoutPanel2->Name = L"flowLayoutPanel2";
-		flowLayoutPanel2->Size = System::Drawing::Size(DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
+		flowLayoutPanel2->Size = *tabSize;
 		flowLayoutPanel2->TabIndex = 2;
 
 		flowLayoutPanel2->Controls->Add(tabControl);
@@ -143,7 +150,7 @@ protected:
 
 	PixelInfo ^pixelInfo; 
 
-	System::Drawing::Size ^margin;
+	System::Drawing::Size ^margin, ^tabSize;
 
 	cAboutDialog ^aboutDialog;
 
@@ -155,11 +162,11 @@ protected:
 		
 		if(fileType == 1) {
 
-			pictureTab = gcnew cFloatPictureTab(fullFileName);
+			pictureTab = gcnew cXmlPictureTab(fullFileName, tabSize);
 
 		} else {
 
-			pictureTab = gcnew cIntPictureTab(fullFileName);
+			pictureTab = gcnew cBytePictureTab(fullFileName, tabSize);
 		}
 	
 		pictureTab->Location = System::Drawing::Point(4, 25);
@@ -265,11 +272,5 @@ protected:
 		}
 	}
 
-	void Resize_Event(System::Object ^sender, System::EventArgs ^e) {
 
-		if(margin) {
-			tabControl->MinimumSize = Size - *margin;
-			tabControl->MaximumSize = Size - *margin;
-		}
-	}
 };

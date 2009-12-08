@@ -2,6 +2,7 @@
 #include <math.h>
 #include "picture_tab.h"
 #include "exposure_dialog.h"
+
 #using <System.dll>
 #using <System.Xml.dll>
 #using <System.Drawing.dll>
@@ -13,14 +14,13 @@ using namespace System::Xml;
 using namespace System::Drawing;
 using namespace System::Windows::Forms;
 
-
-public ref class cFloatPictureTab : public cPictureTab
+public ref class cXmlPictureTab : public cPictureTab
 {
 
 public:
 
-	cFloatPictureTab(String ^fileName) :
-		cPictureTab(fileName)
+	cXmlPictureTab(String ^fileName, System::Drawing::Size ^dim) :
+		cPictureTab(fileName, dim)
     {		
 
 		if(exposureDialog == nullptr) {
@@ -29,7 +29,7 @@ public:
 		}
 		
 		ToolStripMenuItem ^mnuExposure = gcnew ToolStripMenuItem(L"Exposure");
-		mnuExposure->Click += gcnew EventHandler(this, &cFloatPictureTab::mnuExposure_Click);
+		mnuExposure->Click += gcnew EventHandler(this, &cXmlPictureTab::mnuExposure_Click);
 
 		ContextMenuStrip->Items->Add(mnuExposure);
     }
@@ -37,6 +37,8 @@ public:
 	void SetExposure(float exposure) 
 	{
 	
+		this->exposure = exposure;
+
 		int x = 0;
 		int y = 0;
 
@@ -44,6 +46,7 @@ public:
 
 			float rgba[4] = {0,0,0,0};
 
+			// map values into displayable range of [0..1]
 			for(int j = 0; j < nrChannels; j++) {
 
 				rgba[j] = 1 - exp(abs(floatData[i + j]) * exposure);
@@ -104,7 +107,7 @@ protected:
 
 		exposure = -2;
 
-		ParseFloatImage(fileName);
+		ParseXmlImage(fileName);
 		
 		bitmap = gcnew Bitmap(width, height, Imaging::PixelFormat::Format32bppArgb);
 
@@ -112,52 +115,52 @@ protected:
 
 	}
 
-	void ParseFloatImage(String ^fileName) 
+	void ParseXmlImage(String ^fileName) 
 	{
 		String ^channelOrder;
 		String ^dataType;
 		String ^dataFileName;
 
-		floatImageXMLParser = gcnew XmlTextReader(fileName);
+		imageXMLParser = gcnew XmlTextReader(fileName);
 
 		do {
         
-			if(floatImageXMLParser->NodeType == XmlNodeType::Element) {
+			if(imageXMLParser->NodeType == XmlNodeType::Element) {
 				
-				if(floatImageXMLParser->Name == L"HorizontalRes") {
+				if(imageXMLParser->Name == L"HorizontalRes") {
 
-					width = floatImageXMLParser->ReadElementContentAsInt();
-
-				}
-				else if(floatImageXMLParser->Name == L"VerticalRes") {
-
-					height = floatImageXMLParser->ReadElementContentAsInt();
+					width = imageXMLParser->ReadElementContentAsInt();
 
 				}
-				else if(floatImageXMLParser->Name == L"NrChannels") {
+				else if(imageXMLParser->Name == L"VerticalRes") {
 
-					nrChannels = floatImageXMLParser->ReadElementContentAsInt();
-
-				}
-				else if(floatImageXMLParser->Name == L"ChannelOrder") {
-
-					channelOrder = floatImageXMLParser->ReadElementContentAsString();						
+					height = imageXMLParser->ReadElementContentAsInt();
 
 				}
-				else if(floatImageXMLParser->Name == L"DataType") {
+				else if(imageXMLParser->Name == L"NrChannels") {
 
-					dataType = floatImageXMLParser->ReadElementContentAsString();
+					nrChannels = imageXMLParser->ReadElementContentAsInt();
 
 				}
-				else if(floatImageXMLParser->Name == L"DataFile") {
+				else if(imageXMLParser->Name == L"ChannelOrder") {
 
-					dataFileName = floatImageXMLParser->ReadElementContentAsString();
+					channelOrder = imageXMLParser->ReadElementContentAsString();						
+
+				}
+				else if(imageXMLParser->Name == L"DataType") {
+
+					dataType = imageXMLParser->ReadElementContentAsString();
+
+				}
+				else if(imageXMLParser->Name == L"DataFile") {
+
+					dataFileName = imageXMLParser->ReadElementContentAsString();
 
 				}
 
 			}
           
-        } while (floatImageXMLParser->Read() == true);
+        } while (imageXMLParser->Read() == true);
 
 		cli::array<int> ^channelOffset = gcnew cli::array<int>(channelOrder->Length);
 
@@ -182,6 +185,7 @@ protected:
 			
 		}
 
+		// path to dumped data is relative to the location of the xml header
 		String ^fullDataFileName = Path::GetDirectoryName( fileName ) + L"\\" + dataFileName; 
 
 		FileStream ^fileStream = gcnew FileStream(fullDataFileName, FileMode::Open);
@@ -214,8 +218,7 @@ protected:
 
 		if(exposureDialog->ShowDialog() == DialogResult::OK) {
 
-			exposure = exposureDialog->exposure;
-			SetExposure(exposure);
+			SetExposure(exposureDialog->exposure);
 
 			panel->Refresh();
 
@@ -232,6 +235,6 @@ protected:
 	
 	static cExposureDialog ^exposureDialog;
 
-	XmlTextReader ^floatImageXMLParser;
+	XmlTextReader ^imageXMLParser;
 
 };
