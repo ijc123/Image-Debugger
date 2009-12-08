@@ -118,7 +118,7 @@
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="1"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -201,7 +201,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Image Debugger\clr test2.cpp"
+				RelativePath=".\image_debugger.cpp"
 				>
 			</File>
 			<File
@@ -215,34 +215,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\Image Debugger\exposure_dialog.h"
-				>
-			</File>
-			<File
-				RelativePath="..\Image Debugger\Form1.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Form1.h"
-				FileType="3"
-				>
-				<File
-					RelativePath=".\Form1.resX"
-					SubType="Designer"
-					>
-				</File>
-			</File>
-			<File
-				RelativePath="..\Image Debugger\Form1.resx"
-				SubType="Designer"
+				RelativePath=".\about_dialog.h"
 				>
 			</File>
 			<File
 				RelativePath=".\image_debugger.h"
-				>
-			</File>
-			<File
-				RelativePath="..\Image Debugger\picture_tab.h"
 				>
 			</File>
 			<File
@@ -265,6 +242,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Image Debugger\exposure_dialog.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Image Debugger\float_picture_tab.h"
 					>
 				</File>
@@ -275,6 +256,23 @@
 				<File
 					RelativePath=".\picture_tab.h"
 					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Test Form"
+				>
+				<File
+					RelativePath=".\testform.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\testform.h"
+					FileType="3"
+					>
+					<File
+						RelativePath=".\testform.resx"
+						>
+					</File>
 				</File>
 			</Filter>
 		</Filter>

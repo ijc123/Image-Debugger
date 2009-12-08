@@ -2,7 +2,6 @@
 *.ncb
 *.aps
 *.suo
-*.dump
 *.dll
 *.ilk
 *.pdb

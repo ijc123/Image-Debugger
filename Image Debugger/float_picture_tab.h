@@ -182,7 +182,9 @@ protected:
 			
 		}
 
-		FileStream ^fileStream = gcnew FileStream(dataFileName, FileMode::Open);
+		String ^fullDataFileName = Path::GetDirectoryName( fileName ) + L"\\" + dataFileName; 
+
+		FileStream ^fileStream = gcnew FileStream(fullDataFileName, FileMode::Open);
 
 		BinaryReader ^binaryReader = gcnew BinaryReader(fileStream);
 
@@ -201,7 +203,8 @@ protected:
 
 			floatData[i + offset] = value;
 		}
-
+		
+		fileStream->Close();
 		
 	}
 

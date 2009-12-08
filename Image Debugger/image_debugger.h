@@ -2,6 +2,7 @@
 #include "int_picture_tab.h"
 #include "float_picture_tab.h"
 #include "rgba_info.h"
+#include "about_dialog.h"
 
 #using <System.dll>
 #using <System.Drawing.dll>
@@ -19,11 +20,6 @@ public:
 
     cImageDebugger()
     {
-		InitializeComponent();
-    }
-
-    void InitializeComponent()
-    {
 		Form::Text = L"Image Debugger";
 		Form::AutoSize = true;
 
@@ -39,7 +35,6 @@ public:
 		mnuMain->Text = L"mnuMain";
 	
 		mnuFile = gcnew ToolStripMenuItem(L"File");
-		//mnuFile->Text = L"File";
 		mnuOpen = gcnew ToolStripMenuItem(L"Open");
 		mnuOpen->Click += gcnew System::EventHandler(this, &cImageDebugger::mnuOpen_Click);
 
@@ -50,6 +45,17 @@ public:
 		mnuFile->DropDownItems->Add(mnuExit);
 	
 		mnuMain->Items->Add(mnuFile);
+
+		mnuHelp = gcnew ToolStripMenuItem(L"Help");
+		mnuAbout = gcnew ToolStripMenuItem(L"About");
+		mnuAbout->Click += gcnew System::EventHandler(this, &cImageDebugger::mnuAbout_Click);
+
+		mnuHelp->DropDownItems->Add(mnuAbout);
+		
+		mnuMain->Items->Add(mnuHelp);
+
+		aboutDialog = gcnew cAboutDialog();
+		aboutDialog->App = this;
 
 		Controls->Add(mnuMain);
 		MainMenuStrip = mnuMain;	
@@ -114,6 +120,7 @@ public:
 
 		margin->Width = Size.Width - DEFAULT_CANVAS_WIDTH;
 		margin->Height = Size.Height - DEFAULT_CANVAS_HEIGHT;
+
     }
 
 protected:
@@ -122,6 +129,9 @@ protected:
 	ToolStripMenuItem ^mnuFile;
 	ToolStripMenuItem ^mnuOpen;
 	ToolStripMenuItem ^mnuExit;
+
+	ToolStripMenuItem ^mnuHelp;
+	ToolStripMenuItem ^mnuAbout;
 
 	FlowLayoutPanel ^flowLayoutPanel1;
 	FlowLayoutPanel ^flowLayoutPanel2;
@@ -134,6 +144,8 @@ protected:
 	PixelInfo ^pixelInfo; 
 
 	System::Drawing::Size ^margin;
+
+	cAboutDialog ^aboutDialog;
 
 protected:
 
@@ -210,6 +222,11 @@ protected:
 	void mnuExit_Click(System::Object ^sender, System::EventArgs ^e)
 	{
 		Close();
+	}
+
+	void mnuAbout_Click(System::Object ^sender, System::EventArgs ^e)
+	{
+		aboutDialog->ShowDialog();
 	}
 
 	void MouseOverPixel_Event(Object ^sender, Point ^mousePos) 
