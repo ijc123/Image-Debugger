@@ -176,8 +176,6 @@ protected:
 		
 		pictureTab->CloseTab += 
 			gcnew CloseTabEventHandler(this, &cImageDebugger::tabClose_Event);
-
-		tabControl->Size = pictureTab->GetImageSize();		
 		
 		tabControl->TabPages->Add(pictureTab);
 		tabControl->SelectedTab = pictureTab;

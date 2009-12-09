@@ -8,7 +8,7 @@ using namespace System;
 using namespace System::Drawing;
 using namespace System::Windows::Forms;
 
-
+// general one byte per channel images, e.g. png, gif, jpg etc
 public ref class cBytePictureTab : public cPictureTab
 {
 

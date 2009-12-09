@@ -10,7 +10,7 @@ using namespace System::Xml;
 using namespace System::Drawing;
 using namespace System::Windows::Forms;
 
-// double buffered flow layout panel
+
 public ref class cDBFlowLayoutPanel : public FlowLayoutPanel
 {
 
@@ -18,7 +18,8 @@ public:
 
 	cDBFlowLayoutPanel() 
     {		
-
+		// for some reason the doublebuffered property for a flowlayourpanel 
+		// cannot be set from outside the class
 		DoubleBuffered = true;
 
     }

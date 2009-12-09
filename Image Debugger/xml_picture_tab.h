@@ -14,6 +14,7 @@ using namespace System::Xml;
 using namespace System::Drawing;
 using namespace System::Windows::Forms;
 
+// xml pictures can contain either float or int data
 public ref class cXmlPictureTab : public cPictureTab
 {
 
@@ -32,6 +33,7 @@ public:
 		mnuExposure->Click += gcnew EventHandler(this, &cXmlPictureTab::mnuExposure_Click);
 
 		ContextMenuStrip->Items->Add(mnuExposure);
+
     }
 
 	void SetExposure(float exposure) 
@@ -46,7 +48,7 @@ public:
 
 			float rgba[4] = {0,0,0,0};
 
-			// map values into displayable range of [0..1]
+			// map data values into displayable range of [0..1]
 			for(int j = 0; j < nrChannels; j++) {
 
 				rgba[j] = 1 - exp(abs(floatData[i + j]) * exposure);
@@ -56,7 +58,7 @@ public:
 										  int(rgba[1] * 255), 
 										  int(rgba[2] * 255));
 			
-			bitmap->SetPixel(x, globalFlip ? height - y - 1 : y, color);
+			bitmap->SetPixel(x, globalFlip ? y : height - y - 1, color);
 
 			if(++x == width) {
 				x = 0;
@@ -65,7 +67,7 @@ public:
 		}
 
 	}
-
+	// return pixel values for a specified position
 	virtual void GetPixelInfo(Point pos, cPixelInfo ^info) override {
 
 		if(pos.X < 0 || pos.X >= bitmap->Width || pos.Y < 0 || pos.Y >= bitmap->Height) {
@@ -78,7 +80,7 @@ public:
 			return;
 		}
 
-		if(globalFlip) {
+		if(globalFlip == false) {
 
 			pos.Y = height - pos.Y - 1;
 		}
@@ -121,6 +123,7 @@ protected:
 		String ^dataType;
 		String ^dataFileName;
 
+		// parse xml header
 		imageXMLParser = gcnew XmlTextReader(fileName);
 
 		do {
@@ -162,6 +165,14 @@ protected:
           
         } while (imageXMLParser->Read() == true);
 
+		// channel order can be any permutation of "RGBA" depending on the number of channels
+		// for example: 
+		// "ARGB", "BGRA": for 4 channel images 
+		// "RG", "RA": for 2 channel images
+		// If a single channel is specified multiple times, only the last occurence will
+		// be displayed.
+		// e.g: "RRGA", will map the second data channel to Red while the Blue channel
+		// will remain zero for every pixel.
 		cli::array<int> ^channelOffset = gcnew cli::array<int>(channelOrder->Length);
 
 		for(int i = 0; i < channelOrder->Length; i++) {
@@ -185,9 +196,10 @@ protected:
 			
 		}
 
-		// path to dumped data is relative to the location of the xml header
+		// path to dumped data is relative to the location of the xml header file
 		String ^fullDataFileName = Path::GetDirectoryName( fileName ) + L"\\" + dataFileName; 
 
+		// read dumped data
 		FileStream ^fileStream = gcnew FileStream(fullDataFileName, FileMode::Open);
 
 		BinaryReader ^binaryReader = gcnew BinaryReader(fileStream);

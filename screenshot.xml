@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<Image>
+    <Header>
+        <HorizontalRes>512</HorizontalRes>
+        <VerticalRes>512</VerticalRes>
+        <NrChannels>4</NrChannels>
+        <ChannelOrder>RGBA</ChannelOrder>
+        <DataType>float</DataType>
+        <DataFile>screenshot.dump</DataFile>
+    </Header>
+</Image>
