@@ -83,7 +83,7 @@ public:
 		A->Text = init.ToString();
     }
 
-	void SetRGBAValues(PixelInfo ^pixelInfo) {
+	void SetRGBAValues(cPixelInfo ^pixelInfo) {
 
 		R->Text = pixelInfo->R.ToString();
 		G->Text = pixelInfo->G.ToString();

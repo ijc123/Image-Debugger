@@ -1,11 +1,8 @@
-/*
-
-*/
-
 #pragma once
 #include "byte_picture_tab.h"
 #include "xml_picture_tab.h"
 #include "rgba_info.h"
+#include "location_info.h"
 #include "about_dialog.h"
 
 #define DEFAULT_CANVAS_WIDTH	1024
@@ -116,12 +113,13 @@ public:
 		flowLayoutPanel2->Controls->Add(tabControl);
 		Controls->Add(flowLayoutPanel2);
 
-		Label ^position = gcnew Label();
-		position->Name = L"position";
-		position->Text = L"0 0";
-		flowLayoutPanel1->Controls->Add(position);
+		locationInfo = gcnew cLocationInfo;
+		locationInfo->LocationChanged += 
+			gcnew LocationChangedEventHandler(this, &cImageDebugger::LocationChanged_Event);
+	
+		flowLayoutPanel1->Controls->Add(locationInfo);
 
-		pixelInfo = gcnew PixelInfo;
+		pixelInfo = gcnew cPixelInfo;
 
 		margin = gcnew System::Drawing::Size();
 
@@ -148,16 +146,18 @@ protected:
 
 	OpenFileDialog ^ofd;
 
-	PixelInfo ^pixelInfo; 
+	cPixelInfo ^pixelInfo; 
 
 	System::Drawing::Size ^margin, ^tabSize;
 
+	cLocationInfo ^locationInfo;
 	cAboutDialog ^aboutDialog;
 
 protected:
 
 	TabPage ^CreateImageAssets(int fileType, String ^fullFileName, String ^fileName) {
 
+		// create a picturetab from the specified file
 		cPictureTab ^pictureTab;
 		
 		if(fileType == 1) {
@@ -182,10 +182,11 @@ protected:
 		tabControl->TabPages->Add(pictureTab);
 		tabControl->SelectedTab = pictureTab;
 
-		// label
+		// add a rgbainfo control for this picture tab
 		cRGBAInfo ^rgbaInfo = gcnew cRGBAInfo(fileName, pictureTab->Name);
 		flowLayoutPanel1->Controls->Add(rgbaInfo);
 		
+		locationInfo->EnableMode(true);
 		
 		return(tpImage);
 	}
@@ -200,6 +201,7 @@ protected:
 
 	void tabClose_Event(System::Object ^sender)
 	{
+		// close tab page and associated controls
 		cPictureTab ^pictureTab = static_cast<cPictureTab ^>(sender);
 
 		cli::array<Control ^> ^result;
@@ -210,14 +212,18 @@ protected:
 
 		tabControl->TabPages->Remove(pictureTab);
 
+		if(tabControl->TabCount == 0) {
+
+			locationInfo->EnableMode(false);
+		}
 	}
 
 	void mnuOpen_Click(System::Object ^sender, System::EventArgs ^e)
 	{
 		if( ofd->ShowDialog() == ::DialogResult::OK  )
 		{
+			// allow opening of multiple files of the same type
 			for(int i = 0; i < ofd->FileNames->Length; i++) {
-
 				
 				CreateImageAssets(ofd->FilterIndex, ofd->FileNames[i], ofd->SafeFileNames[i]);
 			}
@@ -243,6 +249,8 @@ protected:
 
 		for(int i = 0; i < tabControl->TabCount; i++) {
 
+			// collect pixel values of all open tabs and display them in their
+			// associated rgbainfo controls
 			cPictureTab ^pictureTab = 
 				static_cast<cPictureTab ^>(tabControl->TabPages->default[i]);
 
@@ -260,9 +268,8 @@ protected:
 
 				rgbaInfo->SetBackColor(Color::Aquamarine);
 
-				Label ^position = static_cast<Label ^>(flowLayoutPanel1->Controls->default[0]);
-
-				position->Text = L"(" + mousePos->X.ToString() + L"," + mousePos->Y.ToString() + L")";
+				locationInfo->SetLocation(mousePos);		
+				locationInfo->SetZoomFactor(pictureTab->GetZoomFactor());
 
 			} else {
 
@@ -270,6 +277,18 @@ protected:
 			}
 
 		}
+	}
+
+	void LocationChanged_Event(Object ^sender, Point ^pos) {
+
+		// modify the image source rectangle location and redraw the currently
+		// selected picturetab
+		cPictureTab ^pictureTab = 
+			static_cast<cPictureTab ^>(tabControl->TabPages->default[tabControl->SelectedIndex]);
+
+		pictureTab->SetImageSourceRectPos(*pos);
+		pictureTab->Focus();
+
 	}
 
 

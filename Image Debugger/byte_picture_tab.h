@@ -21,7 +21,7 @@ public:
 
     }
 
-	virtual void GetPixelInfo(Point pos, PixelInfo ^info) override {
+	virtual void GetPixelInfo(Point pos, cPixelInfo ^info) override {
 
 		if(pos.X < 0 || pos.X >= bitmap->Width || pos.Y < 0 || pos.Y >= bitmap->Height) {
 

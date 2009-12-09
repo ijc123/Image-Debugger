@@ -223,6 +223,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\location_info.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Image Debugger\resource.h"
 				>
 			</File>

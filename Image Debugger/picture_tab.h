@@ -9,7 +9,7 @@ using namespace System;
 using namespace System::Drawing;
 using namespace System::Windows::Forms;
 
-public ref class PixelInfo 
+public ref class cPixelInfo 
 {
 public:
 
@@ -20,7 +20,7 @@ public:
 public delegate void MouseOverPixelEventHandler(Object ^sender, Point ^pos);
 public delegate void CloseTabEventHandler(Object ^sender);
 
-private enum ZoomMode {ZOOM_IN,ZOOM_OUT};
+private enum ZoomMode {ZOOM_IN, ZOOM_OUT};
 
 public ref class cPictureTab abstract : public TabPage
 {
@@ -68,7 +68,7 @@ public:
 		}
 	}
 
-	virtual void GetPixelInfo(Point pos, PixelInfo ^info) abstract;
+	virtual void GetPixelInfo(Point pos, cPixelInfo ^info) abstract;
 
 
 	System::Drawing::Size GetImageSize(void) {
@@ -89,6 +89,22 @@ public:
 		zoomedPos.Y = imageSourceRect.Y + (pos.Y + zoomFactor / 2) / zoomFactor;
 
 		return(zoomedPos);
+	}
+
+	void SetImageSourceRectPos(Point screenPos) {
+		
+		imageSourceRect.Width = Size.Width / zoomFactor;
+		imageSourceRect.Height = Size.Height / zoomFactor;
+
+		imageSourceRect.X = screenPos.X - imageSourceRect.Width / 2;
+		imageSourceRect.Y = screenPos.Y - imageSourceRect.Height / 2;
+
+		panel->Refresh();
+	}
+
+	int GetZoomFactor(void) {
+
+		return(zoomFactor);
 	}
 
 protected:
@@ -230,14 +246,7 @@ protected:
 			
 		}
 
-		imageSourceRect.Width = Size.Width / zoomFactor;
-		imageSourceRect.Height = Size.Height / zoomFactor;
-
-		imageSourceRect.X = screenPos.X - imageSourceRect.Width / 2;
-		imageSourceRect.Y = screenPos.Y - imageSourceRect.Height / 2;
-
-		panel->Refresh();
-
+		SetImageSourceRectPos(screenPos);
 	}
 
 	void mnuClose_Click(Object ^sender, EventArgs ^e)

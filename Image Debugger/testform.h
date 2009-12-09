@@ -41,8 +41,12 @@ namespace clrtest2 {
 				delete components;
 			}
 		}
+	private: System::Windows::Forms::MaskedTextBox^  maskedTextBox1;
+	protected: 
+	private: System::Windows::Forms::MaskedTextBox^  maskedTextBox2;
 	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::LinkLabel^  linkLabel1;
+
+
 	protected: 
 
 	private:
@@ -58,36 +62,45 @@ namespace clrtest2 {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->maskedTextBox1 = (gcnew System::Windows::Forms::MaskedTextBox());
+			this->maskedTextBox2 = (gcnew System::Windows::Forms::MaskedTextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->linkLabel1 = (gcnew System::Windows::Forms::LinkLabel());
 			this->SuspendLayout();
+			// 
+			// maskedTextBox1
+			// 
+			this->maskedTextBox1->Cursor = System::Windows::Forms::Cursors::Default;
+			this->maskedTextBox1->Location = System::Drawing::Point(12, 12);
+			this->maskedTextBox1->Mask = L"00000000";
+			this->maskedTextBox1->Name = L"maskedTextBox1";
+			this->maskedTextBox1->Size = System::Drawing::Size(68, 22);
+			this->maskedTextBox1->TabIndex = 0;
+			// 
+			// maskedTextBox2
+			// 
+			this->maskedTextBox2->Location = System::Drawing::Point(86, 12);
+			this->maskedTextBox2->Margin = System::Windows::Forms::Padding(4, 3, 3, 3);
+			this->maskedTextBox2->Name = L"maskedTextBox2";
+			this->maskedTextBox2->Size = System::Drawing::Size(72, 22);
+			this->maskedTextBox2->TabIndex = 1;
 			// 
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(74, 51);
+			this->label1->Location = System::Drawing::Point(175, 14);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(137, 17);
-			this->label1->TabIndex = 0;
-			this->label1->Text = L"Image Debugger 0.5";
-			// 
-			// linkLabel1
-			// 
-			this->linkLabel1->AutoSize = true;
-			this->linkLabel1->Location = System::Drawing::Point(72, 84);
-			this->linkLabel1->Name = L"linkLabel1";
-			this->linkLabel1->Size = System::Drawing::Size(72, 17);
-			this->linkLabel1->TabIndex = 1;
-			this->linkLabel1->TabStop = true;
-			this->linkLabel1->Text = L"linkLabel1";
+			this->label1->Size = System::Drawing::Size(46, 17);
+			this->label1->TabIndex = 2;
+			this->label1->Text = L"label1";
 			// 
 			// testform
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(292, 265);
-			this->Controls->Add(this->linkLabel1);
 			this->Controls->Add(this->label1);
+			this->Controls->Add(this->maskedTextBox2);
+			this->Controls->Add(this->maskedTextBox1);
 			this->Name = L"testform";
 			this->Text = L"testform";
 			this->ResumeLayout(false);
