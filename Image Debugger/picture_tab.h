@@ -217,8 +217,6 @@ protected:
 	void MouseWheel_Event(Object ^sender, MouseEventArgs ^e)
 	{
 
-		if(e->Button != System::Windows::Forms::MouseButtons::Left) return; 
-
 		Point screenPos = ZoomedPos(Point(e->X, e->Y));
 
 		if(e->Delta > 0) {
