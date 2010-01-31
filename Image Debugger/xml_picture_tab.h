@@ -173,25 +173,26 @@ protected:
 		// be displayed.
 		// e.g: "RRGA", will map the second data channel to Red while the Blue channel
 		// will remain zero for every pixel.
-		cli::array<int> ^channelOffset = gcnew cli::array<int>(channelOrder->Length);
+		channelOffset = gcnew cli::array<int>(4);
+		channelOffset->Initialize();
 
 		for(int i = 0; i < channelOrder->Length; i++) {
 		
 			if(channelOrder->Substring(i,1)->ToUpper()->CompareTo(L"R") == 0) {
 
-				channelOffset[i] = 0 - i;
+				channelOffset[i] = 0;
 
 			} else if(channelOrder->Substring(i,1)->ToUpper()->CompareTo(L"G") == 0) {
 
-				channelOffset[i] = 1 - i;
+				channelOffset[i] = 1;
 
 			} else if(channelOrder->Substring(i,1)->ToUpper()->CompareTo(L"B") == 0) {
 
-				channelOffset[i] = 2 - i;
+				channelOffset[i] = 2;
 
 			} else if(channelOrder->Substring(i,1)->ToUpper()->CompareTo(L"A") == 0) {
 
-				channelOffset[i] = 3 - i;
+				channelOffset[i] = 3;
 			}
 			
 		}
@@ -204,23 +205,36 @@ protected:
 
 		BinaryReader ^binaryReader = gcnew BinaryReader(fileStream);
 
-		int size = width * height * nrChannels;
+		int nrActiveChannels = channelOrder->Length;
 
-		floatData = gcnew cli::array<float>(size);
+		int size = width * height;
+		int dataSize = size * nrActiveChannels;
 
+		floatData = gcnew cli::array<float>(dataSize);
+	
 		for(int i = 0; i < size; i++) {
 
-			int offset = channelOffset[i % channelOrder->Length];
+			float tempBuf[4] = {0,0,0,0};
 
-			float value;
+			for(int k = 0; k < nrChannels; k++) {
 
-			if(dataType == L"float") value = binaryReader->ReadSingle();
-			if(dataType == L"int") value = float(binaryReader->ReadInt32());
+				if(dataType == L"float") tempBuf[k] = binaryReader->ReadSingle();
+				if(dataType == L"int") tempBuf[k] = float(binaryReader->ReadInt32());
 
-			floatData[i + offset] = value;
+			}
+
+			int pos = i * nrActiveChannels;
+
+			for(int k = 0; k < nrActiveChannels; k++) {
+
+				floatData[pos + k] = tempBuf[channelOffset[k]];
+			}
+			
 		}
-		
+
 		fileStream->Close();
+
+		nrChannels = nrActiveChannels;
 		
 	}
 
@@ -242,6 +256,8 @@ protected:
 
 	int width, height, nrChannels;
 	cli::array<float> ^floatData;
+
+	cli::array<int> ^channelOffset;
 
 	float exposure;
 	
